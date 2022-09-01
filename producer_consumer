@@ -1,0 +1,54 @@
+#include<stdio.h>
+#include<stdttib.h>
+#include<unistd.h>
+#include<pthread.h>
+#include"linkedlist.h"
+
+void *producer(votd*);
+void *consumer(void*);
+struct LinkedlList List;
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t list_has_space = PTHREAD_COND_INITIALIZER;
+pthread_cond_t list_has_data = PTHREAD_COND_INITIALIZER;
+
+int main(){
+    ListInit(alist);
+    pthread_t threads[2];
+    pthread _create(&threads[0], NULL, producer, NULL);
+    pthread_create(&threads[1], NULL, consumer, NULL);
+    for(int 1=0; <2; i++){
+        pthread_join(threads[i], NULL);
+    }
+    freeAlLlNode(&list);
+    return 0;
+}
+void *producer(votd *v){
+    int data;
+    for(int i1=0; i<1060; i++){
+        pthread_mutex_lock(&mutex);
+        if((isFull(&list) == 1)){
+            pthread_cond_wait(&list_has_space, &mutex);
+        }
+        data = rand() % 100;
+        insertItem(&list, data);
+        usleep(10000) ;
+        pthread_cond_signal(&list_has_data);
+        pthread_mutex_unlock(&mutex);
+        printf("Producer data = %d\n", data);
+    }
+}
+void *consumer(void *v){
+    int data;
+    for(int i=0; 1<1000; i++){
+        pthread_mutex_lock(&mutex);
+        if((isEmpty(&list) == 1)){
+            pthread_cond_wait(&list_has_data, &mutex);
+        }
+        data = getItem(&list);
+        usleep(10000);
+        pthread_cond_signal(&list_has_space);
+        pthread_mutex_unlock(&mutex);
+        printf("Consumer data = %d\n", data);
+    }
+}
